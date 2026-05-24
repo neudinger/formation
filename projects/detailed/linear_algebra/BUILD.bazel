@@ -1,0 +1,82 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_cuda//cuda:defs.bzl", "cuda_library")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "matmul_cpu",
+    srcs = ["matmul_cpu.cc"],
+    hdrs = ["matmul_cpu.h"],
+)
+
+cuda_library(
+    name = "matmul_basic_device",
+    srcs = ["matmul_basic_device.cu"],
+    hdrs = [
+        "matmul_basic.h",
+        "matmul_basic_device.h",
+    ],
+    copts = ["-std=c++26"],
+    defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
+    deps = ["//runtime:cuda_errors"],
+)
+
+cc_library(
+    name = "matmul_basic",
+    srcs = ["matmul_basic_cuda.cc"],
+    hdrs = ["matmul_basic.h"],
+    deps = [
+        ":matmul_basic_device",
+        "//runtime:cuda_launch",
+        "@cuda//:cuda_runtime",
+    ],
+)
+
+cuda_library(
+    name = "matmul_tiled_device",
+    srcs = ["matmul_tiled_device.cu"],
+    hdrs = [
+        "matmul_tiled.h",
+        "matmul_tiled_device.h",
+    ],
+    copts = ["-std=c++26"],
+    defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
+    deps = ["//runtime:cuda_errors"],
+)
+
+cc_library(
+    name = "matmul_tiled",
+    srcs = ["matmul_tiled_cuda.cc"],
+    hdrs = ["matmul_tiled.h"],
+    deps = [
+        ":matmul_tiled_device",
+        "//runtime:cuda_launch",
+        "@cuda//:cuda_runtime",
+    ],
+)
+
+cc_library(
+    name = "matmul_cublas",
+    srcs = ["matmul_cublas.cc"],
+    hdrs = ["matmul_cublas.h"],
+)
+
+cc_test(
+    name = "matmul_test",
+    srcs = ["matmul_test.cc"],
+    deps = [
+        ":matmul_basic",
+        ":matmul_cpu",
+        ":matmul_tiled",
+    ],
+)
+
+cc_binary(
+    name = "matmul_benchmark",
+    srcs = ["matmul_benchmark.cc"],
+    deps = [
+        ":matmul_basic",
+        ":matmul_cpu",
+        ":matmul_tiled",
+    ],
+)

@@ -1,0 +1,46 @@
+module(
+    name = "cuda_bazel_course",
+    version = "1.0.0",
+)
+
+bazel_dep(name = "rules_cc", version = "0.2.17")
+bazel_dep(name = "rules_cuda", version = "0.3.0")
+bazel_dep(name = "rules_python", version = "1.9.0")
+bazel_dep(name = "toolchains_llvm", version = "1.7.0")
+
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+llvm.toolchain(
+    name = "llvm_toolchain",
+    cxx_standard = {"": "c++26"},
+    llvm_version = "20.1.8",
+    stdlib = {"": "builtin-libc++"},
+)
+use_repo(llvm, "llvm_toolchain", "llvm_toolchain_llvm")
+register_toolchains("@llvm_toolchain//:all")
+
+cuda = use_extension("@rules_cuda//cuda:extensions.bzl", "toolchain")
+cuda.redist_json(
+    name = "cuda_12_8_0",
+    components = [
+        "cccl",
+        "cudart",
+        "curand",
+        "nvcc",
+    ],
+    version = "12.8.0",
+)
+cuda.toolkit(name = "cuda")
+use_repo(cuda, "cuda")
+
+register_toolchains(
+    "@cuda//toolchain/clang:clang-local-toolchain",
+    "@cuda//toolchain:nvcc-local-toolchain",
+    "@cuda//toolchain/disabled:disabled-local-toolchain",
+)
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.13",
+)
+use_repo(python, "python_3_13")
+register_toolchains("@python_3_13//:all")

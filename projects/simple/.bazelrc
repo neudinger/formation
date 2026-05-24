@@ -1,0 +1,12 @@
+common --enable_bzlmod
+
+# Keep compiler selection inside Bazel. Do not point CC/CXX at host paths.
+build --extra_toolchains=@llvm_toolchain//:cc-toolchain-x86_64-linux
+
+# Make rules_cuda's Clang CUDA toolchain reuse the selected cc_toolchain.
+build --repo_env=CUDA_COMPILER_USE_CC_TOOLCHAIN=true
+
+build --cxxopt=-std=c++26
+build --host_cxxopt=-std=c++26
+
+run --enable_bzlmod

@@ -1,0 +1,47 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+
+cc_binary(
+    name = "gpu_info",
+    srcs = ["main.cc"],
+    copts = [
+        "-std=c++26",
+    ],
+    deps = [
+        "@cuda//:cuda_runtime",
+    ],
+)
+
+pkg_tar(
+    name = "gpu_info_layer",
+    srcs = [":gpu_info"],
+    include_runfiles = True,
+    mode = "0555",
+    package_dir = "/app",
+    strip_prefix = ".",
+)
+
+oci_image(
+    name = "gpu_info_image",
+    base = "@distroless_cc_debian12_linux_amd64",
+    entrypoint = ["/app/gpu_info"],
+    env = {
+        "NVIDIA_DRIVER_CAPABILITIES": "compute,utility",
+        "NVIDIA_VISIBLE_DEVICES": "all",
+    },
+    tars = [":gpu_info_layer"],
+    workdir = "/app",
+)
+
+oci_load(
+    name = "load_gpu_info_image",
+    image = ":gpu_info_image",
+    repo_tags = ["simple-gpu-info:latest"],
+)
+
+filegroup(
+    name = "gpu_info_image_tar",
+    srcs = [":load_gpu_info_image"],
+    output_group = "tarball",
+)

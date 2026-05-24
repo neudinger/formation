@@ -1,0 +1,15 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+py_binary(
+    name = "benchmark",
+    srcs = ["benchmark.py"],
+    python_version = "PY3",
+)
+
+py_binary(
+    name = "jax_xla_demo",
+    srcs = ["jax_xla_demo.py"],
+    python_version = "PY3",
+)

@@ -1,0 +1,56 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_cuda//cuda:defs.bzl", "cuda_library")
+
+package(default_visibility = ["//visibility:public"])
+
+cuda_library(
+    name = "vector_add_device",
+    srcs = ["vector_add_device.cu"],
+    hdrs = [
+        "vector_add.h",
+        "vector_add_device.h",
+    ],
+    copts = ["-std=c++26"],
+    defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
+    deps = ["//runtime:cuda_errors"],
+)
+
+cc_library(
+    name = "vector_add",
+    srcs = ["vector_add_cuda.cc"],
+    hdrs = ["vector_add.h"],
+    deps = [
+        ":vector_add_device",
+        "//runtime:cuda_launch",
+        "@cuda//:cuda_runtime",
+    ],
+)
+
+cc_test(
+    name = "vector_add_test",
+    srcs = ["vector_add_test.cc"],
+    deps = [
+        ":vector_add",
+        "//cpp:vector_cpu",
+    ],
+)
+
+cc_binary(
+    name = "vector_add_benchmark",
+    srcs = ["vector_add_benchmark.cc"],
+    deps = [
+        ":vector_add",
+        "//cpp:vector_cpu",
+        "//cpp:vector_threaded",
+    ],
+)
+
+cc_binary(
+    name = "vector_launch_benchmark",
+    srcs = ["vector_launch_benchmark.cc"],
+    deps = [
+        ":vector_add_device",
+        "//runtime:cuda_launch",
+        "@cuda//:cuda_runtime",
+    ],
+)

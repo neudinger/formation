@@ -1,0 +1,9 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "vector_add_runtime_files",
+    srcs = [
+        "//gpu:vector_add_benchmark",
+        "//runtime:device_info",
+    ],
+)
