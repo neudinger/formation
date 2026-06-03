@@ -1,15 +1,38 @@
 # Bazel output symlinks and local caches
-/bazel-*
-/.cache/
+bazel-*
+**/bazel-*
+.cache/
+**/.cache/
+
+# Bazel temporary/log files
+*.params
+*.runfiles_manifest
+*.runfiles/
 
 # Build outputs
 *.o
 *.a
 *.so
+*.so.*
 *.d
+*.dll
+*.dylib
+*.exe
+*.out
+*.ptx
+*.cubin
+*.fatbin
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
 
 # Local editor/OS files
 .DS_Store
+.idea/
+.vscode/
 *.swp
 *.swo
 *~

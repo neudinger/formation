@@ -38,7 +38,7 @@ int main() {
   const std::vector<float> b{1, 0, 2, 0, 1, 3, 2, 1, 0, 1, 2, 1};
   const std::vector<float> c(static_cast<std::size_t>(m * n), 1.0f);
   const auto expected = tp::la::matmul_cpu(a, b, c, m, n, k, 1.0f, 0.5f);
-  const std::vector<float> hand{18.5f, 16.5f, 13.5f, 42.5f, 32.5f, 37.5f};
+  const std::vector<float> hand{11.5f, 13.5f, 12.5f, 27.5f, 29.5f, 36.5f};
   expect_close(expected, hand);
   expect_close(tp::la::matmul_basic_cuda(a, b, c, m, n, k, 1.0f, 0.5f), expected);
   expect_close(tp::la::matmul_tiled_cuda(a, b, c, m, n, k, 1.0f, 0.5f), expected);
