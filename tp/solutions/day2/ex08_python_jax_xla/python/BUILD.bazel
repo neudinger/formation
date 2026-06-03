@@ -1,0 +1,26 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+package(default_visibility = ["//visibility:public"])
+
+py_library(
+    name = "lesson_hooks",
+    srcs = ["lesson_hooks.py"],
+)
+
+py_binary(
+    name = "benchmark",
+    srcs = ["benchmark.py"],
+    deps = [":lesson_hooks"],
+)
+
+py_binary(
+    name = "jax_xla_demo",
+    srcs = ["jax_xla_demo.py"],
+    deps = [":lesson_hooks"],
+)
+
+py_test(
+    name = "python_hooks_test",
+    srcs = ["python_hooks_test.py"],
+    deps = [":lesson_hooks"],
+)

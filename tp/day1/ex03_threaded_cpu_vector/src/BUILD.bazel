@@ -1,0 +1,34 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "vector_cpu",
+    srcs = ["vector_cpu.cc"],
+    hdrs = ["vector_cpu.h"],
+)
+
+cc_library(
+    name = "vector_threaded",
+    srcs = ["vector_threaded.cc"],
+    hdrs = ["vector_threaded.h"],
+    deps = [":vector_cpu"],
+)
+
+cc_test(
+    name = "vector_threaded_test",
+    srcs = ["vector_threaded_test.cc"],
+    deps = [
+        ":vector_cpu",
+        ":vector_threaded",
+    ],
+)
+
+cc_binary(
+    name = "vector_cpu_benchmark",
+    srcs = ["vector_cpu_benchmark.cc"],
+    deps = [
+        ":vector_cpu",
+        ":vector_threaded",
+    ],
+)

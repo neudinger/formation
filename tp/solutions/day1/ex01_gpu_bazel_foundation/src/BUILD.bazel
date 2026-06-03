@@ -1,0 +1,22 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "gpu_info_lib",
+    srcs = ["gpu_info.cc"],
+    hdrs = ["gpu_info.h"],
+    deps = ["@cuda//:cuda_runtime"],
+)
+
+cc_binary(
+    name = "gpu_info",
+    srcs = ["main.cc"],
+    deps = [":gpu_info_lib"],
+)
+
+cc_test(
+    name = "gpu_info_test",
+    srcs = ["gpu_info_test.cc"],
+    deps = [":gpu_info_lib"],
+)

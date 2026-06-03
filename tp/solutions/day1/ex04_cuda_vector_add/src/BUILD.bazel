@@ -1,0 +1,63 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_cuda//cuda:defs.bzl", "cuda_library")
+
+package(default_visibility = ["//visibility:public"])
+
+CUDA_COPTS = select({
+    "//:windows": ["-std=c++20"],
+    "//conditions:default": ["-std=c++26"],
+})
+
+cc_library(
+    name = "vector_cpu",
+    srcs = ["vector_cpu.cc"],
+    hdrs = ["vector_cpu.h"],
+)
+
+cc_library(
+    name = "runtime",
+    srcs = ["cuda_runtime_helpers.cc"],
+    hdrs = ["cuda_runtime_helpers.h"],
+    deps = ["@cuda//:cuda_runtime"],
+)
+
+cuda_library(
+    name = "vector_add_device",
+    srcs = ["vector_add_device.cu"],
+    hdrs = [
+        "vector_add.h",
+        "vector_add_device.h",
+    ],
+    copts = CUDA_COPTS,
+    defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
+    deps = [":runtime"],
+)
+
+cc_library(
+    name = "vector_add",
+    srcs = ["vector_add_cuda.cc"],
+    hdrs = ["vector_add.h"],
+    deps = [
+        ":runtime",
+        ":vector_add_device",
+        "@cuda//:cuda_runtime",
+    ],
+)
+
+cc_test(
+    name = "vector_add_test",
+    srcs = ["vector_add_test.cc"],
+    deps = [
+        ":vector_add",
+        ":vector_cpu",
+    ],
+)
+
+cc_binary(
+    name = "vector_add_benchmark",
+    srcs = ["vector_add_benchmark.cc"],
+    deps = [
+        ":vector_add",
+        ":vector_cpu",
+    ],
+)
