@@ -3,6 +3,11 @@ load("@rules_cuda//cuda:defs.bzl", "cuda_library")
 
 package(default_visibility = ["//visibility:public"])
 
+CUDA_COPTS = select({
+    "//:windows": ["-std=c++20"],
+    "//conditions:default": ["-std=c++26"],
+})
+
 cc_library(
     name = "matmul_cpu",
     srcs = ["matmul_cpu.cc"],
@@ -16,7 +21,7 @@ cuda_library(
         "matmul_basic.h",
         "matmul_basic_device.h",
     ],
-    copts = ["-std=c++26"],
+    copts = CUDA_COPTS,
     defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
     deps = ["//runtime:cuda_errors"],
 )
@@ -39,7 +44,7 @@ cuda_library(
         "matmul_tiled.h",
         "matmul_tiled_device.h",
     ],
-    copts = ["-std=c++26"],
+    copts = CUDA_COPTS,
     defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
     deps = ["//runtime:cuda_errors"],
 )

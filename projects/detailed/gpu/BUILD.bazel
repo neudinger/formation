@@ -3,6 +3,11 @@ load("@rules_cuda//cuda:defs.bzl", "cuda_library")
 
 package(default_visibility = ["//visibility:public"])
 
+CUDA_COPTS = select({
+    "//:windows": ["-std=c++20"],
+    "//conditions:default": ["-std=c++26"],
+})
+
 cuda_library(
     name = "vector_add_device",
     srcs = ["vector_add_device.cu"],
@@ -10,7 +15,7 @@ cuda_library(
         "vector_add.h",
         "vector_add_device.h",
     ],
-    copts = ["-std=c++26"],
+    copts = CUDA_COPTS,
     defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
     deps = ["//runtime:cuda_errors"],
 )

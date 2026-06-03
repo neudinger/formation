@@ -20,8 +20,10 @@ The repository defines the build environment:
 - CUDA compiler mode: Clang CUDA, configured through `rules_cuda`.
 - Python: hermetic Python 3.13 from `rules_python`.
 
-Do not point `CC`, `CXX`, or `CUDA_HOME` at host paths for normal builds. The
-runtime machine still needs an NVIDIA driver and CUDA-capable GPU.
+On Linux, do not point `CC`, `CXX`, or `CUDA_HOME` at host paths for normal
+builds. On Windows, Bazel uses the local Visual C++ toolchain and `rules_cuda`
+uses NVIDIA's NVCC/MSVC CUDA toolchain. The runtime machine still needs an
+NVIDIA driver and CUDA-capable GPU.
 
 ## Repository Map
 
@@ -45,6 +47,49 @@ bazel run //gpu:vector_add_benchmark
 bazel run //gpu:vector_launch_benchmark
 bazel run //linear_algebra:matmul_benchmark
 ```
+
+On Windows, run the same labels from PowerShell or `cmd.exe` after installing
+Bazel/Bazelisk, a recent Visual Studio C++ build toolchain, and an NVIDIA
+driver:
+
+```powershell
+bazel test //cpp:vector_cpu_test
+bazel run //runtime:device_info
+bazel test //gpu:vector_add_test
+bazel run //gpu:vector_add_benchmark
+```
+
+Build all MatMul/GEMM lesson targets:
+
+```bash
+bazel build //linear_algebra:all
+```
+
+Run the executable MatMul/GEMM lesson targets:
+
+```bash
+bazel test //linear_algebra:matmul_test
+bazel run //linear_algebra:matmul_test
+bazel run //linear_algebra:matmul_benchmark
+```
+
+All MatMul/GEMM labels:
+
+| Target | Kind |
+| --- | --- |
+| `//linear_algebra:matmul_cpu` | CPU library |
+| `//linear_algebra:matmul_basic_device` | basic CUDA device library |
+| `//linear_algebra:matmul_basic` | basic CUDA host library |
+| `//linear_algebra:matmul_tiled_device` | tiled CUDA device library |
+| `//linear_algebra:matmul_tiled` | tiled CUDA host library |
+| `//linear_algebra:matmul_cublas` | cuBLAS placeholder library |
+| `//linear_algebra:matmul_test` | correctness test executable |
+| `//linear_algebra:matmul_benchmark` | benchmark executable |
+
+`//linear_algebra:matmul_test` checks the CPU, basic CUDA, and tiled CUDA
+implementations against the same expected output.
+`//linear_algebra:matmul_benchmark` times those implementations in one
+executable.
 
 Run the Python lesson hooks:
 

@@ -1,15 +1,27 @@
 common --enable_bzlmod
+common --enable_platform_specific_config
 
-# Keep compiler selection inside Bazel. Do not point CC/CXX at host paths.
-build --extra_toolchains=@llvm_toolchain//:cc-toolchain-x86_64-linux
+# Keep compiler selection inside Bazel on Linux. Do not point CC/CXX at host
+# paths for normal Linux builds.
+build:linux --extra_toolchains=@llvm_toolchain//:cc-toolchain-x86_64-linux
 
 # Make rules_cuda's Clang CUDA toolchain reuse the selected cc_toolchain.
-build --repo_env=CUDA_COMPILER_USE_CC_TOOLCHAIN=true
-build --@rules_cuda//cuda:compiler=clang
+build:linux --repo_env=CUDA_COMPILER_USE_CC_TOOLCHAIN=true
+build:linux --@rules_cuda//cuda:compiler=clang
+
 build --@rules_cuda//cuda:archs=compute_86:compute_86,sm_86
 
-build --cxxopt=-std=c++26
-build --host_cxxopt=-std=c++26
+build:linux --cxxopt=-std=c++26
+build:linux --host_cxxopt=-std=c++26
+build:macos --cxxopt=-std=c++26
+build:macos --host_cxxopt=-std=c++26
+
+# On Windows, Bazel uses its local Visual C++ toolchain and rules_cuda's
+# nvcc/MSVC toolchain.
+build:windows --@rules_cuda//cuda:compiler=nvcc
+build:windows --cxxopt=/std:c++latest
+build:windows --host_cxxopt=/std:c++latest
+build:windows --@rules_cuda//cuda:host_copts=/std:c++20
 
 test --test_output=errors
 run --enable_bzlmod

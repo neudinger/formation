@@ -1,0 +1,15 @@
+# Bazel output symlinks and local caches
+bazel-*
+/.cache/
+
+# Build outputs
+*.o
+*.a
+*.so
+*.d
+
+# Local editor/OS files
+.DS_Store
+*.swp
+*.swo
+*~
