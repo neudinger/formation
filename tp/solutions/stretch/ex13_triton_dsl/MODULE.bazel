@@ -1,0 +1,22 @@
+module(
+    name = "triton_dsl_course",
+    version = "1.0.0",
+)
+
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "rules_python", version = "1.9.0")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.13",
+)
+use_repo(python, "python_3_13")
+register_toolchains("@python_3_13//:all")
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "pypi",
+    python_version = "3.13",
+    requirements_lock = "//:requirements_linux.txt",
+)
+use_repo(pip, "pypi")

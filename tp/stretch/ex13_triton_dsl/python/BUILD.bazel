@@ -1,0 +1,27 @@
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+package(default_visibility = ["//visibility:public"])
+
+PY_DEPS = [
+    requirement("torch"),
+    requirement("triton"),
+]
+
+py_library(
+    name = "triton_kernels",
+    srcs = ["triton_kernels.py"],
+    deps = PY_DEPS,
+)
+
+py_binary(
+    name = "benchmark",
+    srcs = ["benchmark.py"],
+    deps = [":triton_kernels"] + PY_DEPS,
+)
+
+py_test(
+    name = "triton_kernels_test",
+    srcs = ["triton_kernels_test.py"],
+    deps = [":triton_kernels"] + PY_DEPS,
+)
