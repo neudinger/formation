@@ -24,6 +24,7 @@ cuda.redist_json(
     name = "cuda_12_8_0",
     components = [
         "cccl",
+        "cublas",
         "cudart",
         "curand",
         "nvcc",

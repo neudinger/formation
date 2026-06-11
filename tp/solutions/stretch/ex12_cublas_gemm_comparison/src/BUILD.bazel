@@ -77,6 +77,7 @@ cc_library(
     }),
     deps = [
         ":runtime",
+        "@cuda//:cublas",
         "@cuda//:cuda_runtime",
     ],
 )
