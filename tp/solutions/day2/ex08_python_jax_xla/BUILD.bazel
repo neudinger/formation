@@ -1,6 +1,16 @@
+load("@rules_python//python/uv:lock.bzl", "lock")
+
 package(default_visibility = ["//visibility:public"])
 
 config_setting(
     name = "windows",
     constraint_values = ["@platforms//os:windows"],
+)
+
+lock(
+    name = "requirement",
+    srcs = ["requirement.txt"],
+    generate_hashes = False,
+    out = "requirement.txt",
+    python_version = "3.13",
 )

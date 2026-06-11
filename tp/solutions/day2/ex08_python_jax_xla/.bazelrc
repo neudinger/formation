@@ -16,6 +16,9 @@ build:linux --host_cxxopt=-std=c++26
 build:macos --cxxopt=-std=c++26
 build:macos --host_cxxopt=-std=c++26
 
+build --@rules_python//python/config_settings:bootstrap_impl=script
+build --@rules_python//python/config_settings:venvs_site_packages=yes
+
 # On Windows, Bazel uses its local Visual C++ toolchain and rules_cuda's
 # nvcc/MSVC toolchain.
 build:windows --@rules_cuda//cuda:compiler=nvcc

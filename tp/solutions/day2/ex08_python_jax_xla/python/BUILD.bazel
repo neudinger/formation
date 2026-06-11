@@ -16,7 +16,11 @@ py_binary(
 py_binary(
     name = "jax_xla_demo",
     srcs = ["jax_xla_demo.py"],
-    deps = [":lesson_hooks"],
+    deps = [
+        "@pypi//jax",
+        "@pypi//jax_cuda12_pjrt",
+        "@pypi//jax_cuda12_plugin",
+    ],
 )
 
 py_test(
