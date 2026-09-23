@@ -23,6 +23,7 @@ __global__ void vector_add_kernel(const float *a, const float *b, float *out,
 void launch_vector_add_kernel(const float *a, const float *b, float *out,
                               float alpha, int n, cudaStream_t stream,
                               LaunchApi launch_api) {
+  // Experiment: try 128, 256, and 512; keep the input size unchanged.
   constexpr int block_size = 256;
   const dim3 block(block_size);
   const dim3 grid((n + block_size - 1) / block_size);

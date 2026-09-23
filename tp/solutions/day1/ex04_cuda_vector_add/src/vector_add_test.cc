@@ -30,13 +30,16 @@ void expect_close(const std::vector<float> &got, const std::vector<float> &expec
 } // namespace
 
 int main() {
-  std::vector<float> a(1024);
-  std::vector<float> b(1024);
-  for (std::size_t i = 0; i < a.size(); ++i) {
-    a[i] = static_cast<float>(i % 13);
-    b[i] = static_cast<float>(i % 17);
+  // Check both full blocks and a final partial block at each chosen block size.
+  for (const std::size_t size : {1024, 1003}) {
+    std::vector<float> a(size);
+    std::vector<float> b(size);
+    for (std::size_t i = 0; i < a.size(); ++i) {
+      a[i] = static_cast<float>(i % 13);
+      b[i] = static_cast<float>(i % 17);
+    }
+    const auto expected = tp::vector_add_cpu(a, b, 2.5f);
+    expect_close(tp::gpu::vector_add_cuda(a, b, 2.5f, tp::gpu::LaunchApi::kTripleChevron), expected);
+    expect_close(tp::gpu::vector_add_cuda(a, b, 2.5f, tp::gpu::LaunchApi::kRuntimeApi), expected);
   }
-  const auto expected = tp::vector_add_cpu(a, b, 2.5f);
-  expect_close(tp::gpu::vector_add_cuda(a, b, 2.5f, tp::gpu::LaunchApi::kTripleChevron), expected);
-  expect_close(tp::gpu::vector_add_cuda(a, b, 2.5f, tp::gpu::LaunchApi::kRuntimeApi), expected);
 }
