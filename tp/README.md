@@ -14,6 +14,14 @@ tp/
   solutions/  # complete mirrored answers
 ```
 
+## Stretch exercises
+
+- Ex11: multi-stream overlap.
+- Ex12: cuBLAS GEMM comparison.
+- Ex13: Triton DSL.
+- [Ex14: reduction and atomics](stretch/ex14_reduction_atomics/README.md) — compare
+  per-element atomic updates with a block-local reduction.
+
 ## Workflow
 
 ```bash
