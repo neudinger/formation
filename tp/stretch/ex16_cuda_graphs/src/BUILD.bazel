@@ -1,0 +1,26 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_test")
+load("@rules_cuda//cuda:defs.bzl", "cuda_library")
+
+cuda_library(
+    name = "graph_replay",
+    srcs = ["graph_replay.cu"],
+    hdrs = ["graph_replay.h"],
+    copts = select({
+        "//:windows": ["-std=c++20"],
+        "//conditions:default": ["-std=c++26"],
+    }),
+    defines = ["_ALLOW_UNSUPPORTED_LIBCPP"],
+    deps = ["@cuda//:cuda_runtime"],
+)
+
+cc_test(
+    name = "graph_replay_test",
+    srcs = ["graph_replay_test.cc"],
+    deps = [":graph_replay"],
+)
+
+cc_binary(
+    name = "graph_replay_benchmark",
+    srcs = ["graph_replay_benchmark.cc"],
+    deps = [":graph_replay"],
+)
