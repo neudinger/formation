@@ -21,6 +21,8 @@ tp/
 - Ex13: Triton DSL.
 - [Ex14: reduction and atomics](stretch/ex14_reduction_atomics/README.md) — compare
   per-element atomic updates with a block-local reduction.
+- [Ex15: Unified Memory](stretch/ex15_unified_memory/README.md) — compare vector
+  addition with managed memory and explicit copies.
 
 ## Workflow
 
