@@ -19,7 +19,10 @@ void cuda_check(cudaError_t error, const char *call, const char *file, int line)
   }
 }
 
-Stream::Stream() { TP_CUDA_CHECK(cudaStreamCreate(&stream_)); }
-Stream::~Stream() { (void)cudaStreamDestroy(stream_); }
+Stream::Stream() { TP_CUDA_CHECK(cudaStreamCreateWithFlags(&stream_, cudaStreamNonBlocking)); }
+Stream::~Stream() {
+  (void)cudaStreamSynchronize(stream_);
+  (void)cudaStreamDestroy(stream_);
+}
 
 } // namespace tp::runtime

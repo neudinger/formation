@@ -38,6 +38,7 @@ cc_library(
     srcs = ["vector_add_cuda.cc"],
     hdrs = ["vector_add.h"],
     deps = [
+        ":chunk_plan",
         ":runtime",
         ":vector_add_device",
         "@cuda//:cuda_runtime",
